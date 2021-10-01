@@ -80,6 +80,8 @@ func handleRequest()  {
 
 	myRouter.HandleFunc("/api/users", createUser).Methods("POST") 
 	myRouter.HandleFunc("/api/users", getUsers).Methods("GET") 
+	myRouter.HandleFunc("/api/user/{id}", getUser).Methods("GET") 
+
 
 	
 
@@ -128,7 +130,28 @@ func getUsers(w http.ResponseWriter, r *http.Request)  {
 	db.Find(&users)
 
 
-	res:= Result{Code: 200, Data: users, Message: "Succes get all users"}
+	res:= Result{Code: 200, Data: users, Message: "Success get all users"}
+
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)	
+}
+
+// route to get singele data of user
+func getUser(w http.ResponseWriter, r *http.Request)  {
+	
+	vars	:= mux.Vars(r)
+	key 	:= vars["ID"]
+	var user User
+
+	db.First(&user, key)
+
+
+
+	res:= Result{Code: 200, Data: user, Message: "Success get user with id"}
 
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
