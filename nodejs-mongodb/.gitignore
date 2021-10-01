@@ -1,0 +1,5 @@
+nodejs-mongo2/node_modules/
+nodejs-mongo2/*.env
+
+nodejs-mongodb/node_modules
+nodejs-mongo2/*.env
