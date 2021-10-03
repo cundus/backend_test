@@ -77,6 +77,8 @@ func handleRequest()  {
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/api/locations", createLocation).Methods("POST") 
 	myRouter.HandleFunc("/api/locations", getLocations).Methods("GET") 
+	myRouter.HandleFunc("/api/location/{id}", getLocation).Methods("GET") 
+
 
 	myRouter.HandleFunc("/api/users", createUser).Methods("POST") 
 	myRouter.HandleFunc("/api/users", getUsers).Methods("GET") 
@@ -190,6 +192,27 @@ func getLocations(w http.ResponseWriter, r *http.Request)  {
 
 
 	res:= Result{Code: 200, Data: locations, Message: "Success get all locations"}
+
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)	
+}
+
+// route to get singele data of location
+func getLocation(w http.ResponseWriter, r *http.Request)  {
+	
+	vars	:= mux.Vars(r)
+	key 	:= vars["ID"]
+	var location Location
+
+	db.First(&location, key)
+
+
+
+	res:= Result{Code: 200, Data: location, Message: "Success get user with id"}
 
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusInternalServerError)
